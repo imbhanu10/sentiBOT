@@ -75,7 +75,7 @@ def load_chat(filename):
     with open(os.path.join(SESSION_DIR, filename), "r") as f:
         data = json.load(f)
         st.session_state.messages = data["messages"]
-        st.session_state.scores = data.get("scores", []) # .get() prevents crash on old files
+        st.session_state.scores = data.get("scores", []) 
 
 # --- SIDEBAR ---
 with st.sidebar:
@@ -131,10 +131,24 @@ with st.sidebar:
 
     st.divider()
 
-    # 4. END SESSION
+    # 4. END SESSION & REPORT
     if st.button("🛑 End & Analyze"):
-        verdict = analyzer.get_overall_verdict(st.session_state.scores)
-        st.success(f"Verdict: {verdict}")
+        report = analyzer.generate_session_report(st.session_state.scores)
+        
+        st.success("Session Analyzed!")
+        
+        st.markdown(f"""
+        **Overall Verdict:** {report['verdict']}
+        
+        **Emotional Trend:** {report['trend']}
+        
+        **Avg Confidence:** {report['final_score']:.2f}
+        """)
+        
+        # VISUAL GRAPH (Only appears here now)
+        st.caption("Emotional Journey Graph")
+        st.line_chart(st.session_state.scores, height=150)
+        
         save_chat()
         st.caption("Session Saved.")
 
