@@ -1,0 +1,6 @@
+nltk
+streamlit
+ollama
+transformers
+torch
+scipy
